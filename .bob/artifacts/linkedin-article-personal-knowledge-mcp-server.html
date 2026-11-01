@@ -1,0 +1,276 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LinkedIn Article — Personal Knowledge MCP Server</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1f2328;
+    background: #ffffff;
+    padding: 40px 20px 60px;
+  }
+  .container { max-width: 760px; margin: 0 auto; }
+  .meta {
+    font-size: 12px;
+    color: #57606a;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .meta strong { color: #1f2328; }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    color: #1f2328;
+  }
+  .subtitle {
+    font-size: 17px;
+    color: #57606a;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+  h2 {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 36px 0 12px;
+    color: #1f2328;
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 24px 0 8px;
+    color: #1f2328;
+  }
+  p { margin-bottom: 16px; }
+  ul, ol { padding-left: 22px; margin-bottom: 16px; }
+  li { margin-bottom: 6px; }
+  code {
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    font-size: 13px;
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  pre {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  pre code { background: none; border: none; padding: 0; }
+  .callout {
+    background: #f0f4ff;
+    border-left: 4px solid #3b82d4;
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  th {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    border: 1px solid #e5e7eb;
+    padding: 8px 12px;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #fafafa; }
+  .section-divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 32px 0;
+  }
+  .tag {
+    display: inline-block;
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 12px;
+    color: #57606a;
+    margin: 2px;
+  }
+  .tags { margin-top: 32px; }
+  .footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 12px;
+    color: #57606a;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="meta">
+    <strong>Ali Habbache</strong>  ·  LinkedIn Article  ·  Open Source  ·  MCP / AI Tooling
+  </div>
+
+  <h1>I Built a Server That Gives Your AI Access to Your Personal Notes</h1>
+  <p class="subtitle">Your knowledge base is your most valuable asset. Here's how I made mine queryable through natural language — without sending a single file to the cloud.</p>
+
+  <hr class="section-divider" />
+
+  <h2>The Problem I Kept Running Into</h2>
+  <p>I take a lot of notes. Sprint recaps, architecture decision records, product ideas, research summaries — all living in Markdown files across a folder structure I built over years.</p>
+  <p>But every time I sat down with an AI assistant to think through a problem, I had to start from scratch. The AI had no idea what I'd already written. I was copy-pasting context into every chat, searching my vault manually, switching apps mid-thought.</p>
+  <p>My knowledge was <em>trapped</em>. The AI was <em>blind</em>.</p>
+  <p>So I built a fix.</p>
+
+  <hr class="section-divider" />
+
+  <h2>What I Built: Personal Knowledge MCP Server</h2>
+
+  <div class="callout">
+    An open-source MCP server that exposes your Markdown notes — Obsidian vaults, Notion exports, or any folder of <code>.md</code> files — as live resources and tools for any AI assistant.
+  </div>
+
+  <p>Once connected, you talk to your notes the same way you talk to your AI:</p>
+
+  <pre>"Search my notes for 'system design'"
+"Summarize my note on async architecture"
+"What have I written about product strategy?"
+"List all my notes"</pre>
+
+  <p>No copy-paste. No app switching. No wondering if you already thought about this.</p>
+
+  <hr class="section-divider" />
+
+  <h2>How It Works</h2>
+  <p>The server is built on the <strong>Model Context Protocol (MCP)</strong> — an open standard for connecting AI assistants to external data sources and tools. It runs locally as a stdio process, meaning:</p>
+  <ul>
+    <li>Your notes never leave your machine</li>
+    <li>The AI never has direct filesystem access</li>
+    <li>The server only reads what's inside your designated notes folder</li>
+  </ul>
+
+  <p>The architecture is clean:</p>
+  <pre>Your Prompt
+    ↓
+MCP Client (Bob / Claude Desktop)
+    ↓  JSON-RPC 2.0 over stdio
+Personal Knowledge MCP Server
+    ↓  fs.readFile() — read only
+Your Notes (Markdown files on disk)</pre>
+
+  <h2>What It Exposes</h2>
+
+  <table>
+    <thead>
+      <tr><th>Capability</th><th>Type</th><th>What it does</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>note:///</code></td><td>Resource</td><td>Lists every <code>.md</code> file in your vault with its URI</td></tr>
+      <tr><td><code>note:///{path}</code></td><td>Resource Template</td><td>Reads any individual note by URI on demand</td></tr>
+      <tr><td><code>search_notes</code></td><td>Tool</td><td>Full-text search — returns titles + matching line snippets</td></tr>
+      <tr><td><code>get_note</code></td><td>Tool</td><td>Fetches a note by URI or fuzzy filename for LLM summarization</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="section-divider" />
+
+  <h2>Who This Is For</h2>
+
+  <table>
+    <thead>
+      <tr><th>Role</th><th>How they use it</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Knowledge workers</strong></td><td>Surface forgotten notes and decisions without leaving the AI workflow</td></tr>
+      <tr><td><strong>Engineers &amp; architects</strong></td><td>Query ADRs, design notes, and tech spike write-ups mid-conversation</td></tr>
+      <tr><td><strong>Product managers</strong></td><td>Pull up sprint notes, OKR drafts, and stakeholder summaries on demand</td></tr>
+      <tr><td><strong>Researchers &amp; writers</strong></td><td>Let the AI cross-reference private research while drafting</td></tr>
+      <tr><td><strong>Students</strong></td><td>Ask the AI to summarize or connect concepts across study notes</td></tr>
+      <tr><td><strong>Obsidian / Notion users</strong></td><td>Turn a static archive into a queryable second brain</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="section-divider" />
+
+  <h2>How to Use It</h2>
+
+  <h3>Step 1 — Clone and build</h3>
+  <pre>git clone https://github.com/alihabbache/Personal-Knowledge-MCP-Server.git
+cd Personal-Knowledge-MCP-Server
+npm install &amp;&amp; npm run build</pre>
+
+  <h3>Step 2 — Register with your MCP client</h3>
+  <p>Add this to your MCP config (e.g. <code>~/.bob/settings/mcp.json</code> for Bob, or Claude Desktop's config):</p>
+  <pre>{
+  "mcpServers": {
+    "personal-knowledge": {
+      "command": "node",
+      "args": ["/path/to/Personal-Knowledge-MCP-Server/build/index.js"],
+      "env": {
+        "NOTES_DIR": "/path/to/your/notes"
+      }
+    }
+  }
+}</pre>
+
+  <h3>Step 3 — Talk to your notes</h3>
+  <p>That's it. Restart your AI client and start asking questions in plain English.</p>
+
+  <hr class="section-divider" />
+
+  <h2>What I Learned Building This</h2>
+  <p><strong>MCP is genuinely powerful.</strong> The protocol is simple — JSON-RPC 2.0 over stdio — but the developer experience of registering a tool and having it show up in an AI client immediately is remarkable. The feedback loop is fast.</p>
+  <p><strong>The value is in the retrieval, not the storage.</strong> Most people already have great notes. The missing piece is a layer that makes those notes accessible to the tools they're already using.</p>
+  <p><strong>Local-first matters.</strong> Running on stdio means zero network calls, zero cloud dependency, zero privacy risk. Your notes stay on your machine. That's not a compromise — it's a feature.</p>
+
+  <hr class="section-divider" />
+
+  <h2>What's Next</h2>
+  <ul>
+    <li>Semantic search using local embeddings (no API key required)</li>
+    <li>Tag and front-matter filtering</li>
+    <li>Backlink traversal for Obsidian vaults</li>
+    <li>A <code>create_note</code> tool so the AI can write back to your vault</li>
+  </ul>
+  <p>The project is open source. Contributions and feedback are very welcome.</p>
+
+  <div class="callout">
+    🔗 <strong>GitHub:</strong> <a href="https://github.com/alihabbache/Personal-Knowledge-MCP-Server">github.com/alihabbache/Personal-Knowledge-MCP-Server</a>
+  </div>
+
+  <div class="tags">
+    <span class="tag">#MCP</span>
+    <span class="tag">#OpenSource</span>
+    <span class="tag">#AI</span>
+    <span class="tag">#Obsidian</span>
+    <span class="tag">#Notion</span>
+    <span class="tag">#ProductManagement</span>
+    <span class="tag">#KnowledgeManagement</span>
+    <span class="tag">#BuildInPublic</span>
+    <span class="tag">#TypeScript</span>
+    <span class="tag">#NodeJS</span>
+  </div>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>
