@@ -221,15 +221,6 @@ README.md
 
 ---
 
-## Ideas for Next
-
-- Semantic search with local embeddings
-- Tag and front-matter filtering
-- Backlink traversal for Obsidian vaults
-- A `create_note` tool (write access means revisiting everything in the Security section)
-
----
-
 ## License
 
 ISC — free to use, modify, and distribute.
