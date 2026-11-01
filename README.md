@@ -160,6 +160,26 @@ The LLM never touches your filesystem directly. The MCP server is the only proce
 
 ---
 
+## Security
+
+Security was a first-class concern in this project. Here's what's in place:
+
+| Property | Detail |
+|---|---|
+| **Read-only filesystem** | The server only calls `fs.readFile` and `fs.readdir`. There is no write, delete, or execute operation anywhere in the codebase. |
+| **Path traversal protection** | Every URI is resolved to an absolute path and verified to start with `NOTES_DIR` before any file is read. A crafted URI like `note:///../../etc/passwd` is blocked and returns an error. |
+| **No network listener** | The server runs over stdio — there is no open port, no HTTP server, no socket. Only the process that spawned it (your MCP client) can communicate with it. |
+| **Hidden files excluded** | Files and directories starting with `.` are skipped during vault traversal — your `.env`, `.ssh`, and app config folders are never touched. |
+| **No credentials** | The server requires no API keys, tokens, or passwords. Nothing sensitive passes through it. |
+| **No shell execution** | There is no `eval()`, `exec()`, `spawn()`, or `child_process` usage anywhere in the code. |
+| **Sandboxed to `NOTES_DIR`** | The vault walker only ever descends into the single directory set at startup. It cannot be redirected at runtime. |
+
+### One design trade-off to be aware of
+
+When `get_note` returns note content, that content is passed to the LLM in your MCP client's context. If you are using a **cloud-hosted LLM** (Claude, GPT-4, etc.), that content leaves your machine and is processed by the LLM provider. The *server* is fully local — but the *LLM* may not be. Use a local model (e.g. via Ollama) if your notes are sensitive and you require end-to-end local processing.
+
+---
+
 ## Development
 
 ```bash
