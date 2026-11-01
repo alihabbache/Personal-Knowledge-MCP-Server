@@ -8,8 +8,6 @@
 
 ## Why I Built This
 
-I kept hearing about the Model Context Protocol (MCP) and realised I could describe it but not explain what actually happens between an AI client and a server. So I built a small one to find out.
-
 I picked the simplest useful idea I could think of: let an AI assistant search and read a folder of Markdown notes. It is small enough to finish and real enough to run into the interesting problems, especially around what happens when you give an AI read access to files.
 
 This is a personal learning project built with IBM Bob. The views here are my own, and it has not been audited. Please read the [Security](#security) section before pointing it at anything you care about.
