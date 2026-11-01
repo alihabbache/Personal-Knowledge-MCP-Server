@@ -58,6 +58,28 @@ function uriToFile(uri: string): string {
   return resolved;
 }
 
+/**
+ * Final gate before any direct read (resource template and get_note by URI).
+ * uriToFile() only checks the path lexically, so this adds three checks:
+ *  - no hidden path segments (.env, .ssh, .git ...), matching the vault walker
+ *  - only .md files, matching the vault walker
+ *  - the real path (symlinks resolved) must still be inside NOTES_DIR
+ */
+async function assertReadableNote(filePath: string): Promise<void> {
+  const rel = path.relative(NOTES_DIR, filePath);
+  if (rel.split(path.sep).some((seg) => seg.startsWith("."))) {
+    throw new Error("Blocked: hidden files and folders are not readable.");
+  }
+  if (!filePath.endsWith(".md")) {
+    throw new Error("Blocked: only .md files are readable.");
+  }
+  const realBase = (await fs.realpath(NOTES_DIR)) + path.sep;
+  const realFile = await fs.realpath(filePath);
+  if (!realFile.startsWith(realBase)) {
+    throw new Error("Blocked: note resolves to a location outside NOTES_DIR.");
+  }
+}
+
 /** Read a single note, returning its content as a string. */
 async function readNote(filePath: string): Promise<string> {
   return fs.readFile(filePath, "utf-8");
@@ -133,6 +155,7 @@ server.resource(
   async (uri, _variables) => {
     const filePath = uriToFile(uri.href);
     try {
+      await assertReadableNote(filePath);
       const content = await readNote(filePath);
       return {
         contents: [
@@ -261,6 +284,7 @@ server.tool(
     }
 
     try {
+      await assertReadableNote(filePath);
       const content = await readNote(filePath);
       const title = extractTitle(content, filePath);
       return {
@@ -271,10 +295,16 @@ server.tool(
           },
         ],
       };
-    } catch {
+    } catch (err) {
+      const blocked = err instanceof Error && err.message.startsWith("Blocked:");
       return {
         content: [
-          { type: "text", text: `Could not read note at path: ${filePath}` },
+          {
+            type: "text",
+            text: blocked
+              ? (err as Error).message
+              : `Could not read note: ${identifier}`,
+          },
         ],
         isError: true,
       };

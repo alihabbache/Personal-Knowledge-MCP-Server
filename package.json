@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc && chmod 755 build/index.js",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "security-check": "node scripts/security-check.mjs"
   },
   "bin": {
     "personal-knowledge-mcp-server": "./build/index.js"

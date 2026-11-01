@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Connect your personal notes — Obsidian, Notion, or any Markdown folder — to any AI assistant. Search, retrieve, and summarize your entire knowledge base through natural language." />
+  <meta name="description" content="A small learning project: an MCP server that lets an AI assistant search and read a folder of Markdown notes." />
   <title>Personal Knowledge MCP Server</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -176,6 +176,17 @@
     .sec-card .icon { font-size: 20px; margin-bottom: 8px; }
     .sec-card h3 { font-size: 14px; margin-bottom: 4px; color: var(--text); }
     .sec-card p { font-size: 13px; margin: 0; }
+    .sec-card.found { background: var(--yellow-light); border-color: #fde68a; }
+    .limits {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .limits ul { margin: 8px 0 0 20px; color: var(--muted); }
     .tradeoff {
       background: var(--yellow-light);
       border: 1px solid #fde68a;
@@ -270,11 +281,11 @@
   <nav>
     <span class="nav-brand">Personal Knowledge MCP</span>
     <div class="nav-links">
-      <a href="#problem">Problem</a>
+      <a href="#why">Why</a>
       <a href="#features">Features</a>
       <a href="#security">Security</a>
       <a href="#install">Install</a>
-      <a href="#who">Who It's For</a>
+      <a href="#next">Next</a>
     </div>
     <a class="nav-cta" href="https://github.com/alihabbache/Personal-Knowledge-MCP-Server" target="_blank">View on GitHub</a>
   </nav>
@@ -282,11 +293,11 @@
   <!-- Hero -->
   <section id="hero">
     <div class="container">
-      <div class="section-label">Open Source · MCP · Local-first</div>
-      <h1>Your AI Can Now Read Your Notes</h1>
+      <div class="section-label">Open Source · MCP · Learning project</div>
+      <h1>A small MCP server for reading your Markdown notes</h1>
       <p class="subtitle">
-        Connect your Obsidian vault, Notion export, or any Markdown folder to any AI assistant.
-        Search, retrieve, and summarize your entire knowledge base through natural language.
+        I built this to understand the Model Context Protocol by making something real with it:
+        an AI assistant that can search and read a folder of Markdown notes.
       </p>
       <div class="hero-actions">
         <a class="btn-primary" href="https://github.com/alihabbache/Personal-Knowledge-MCP-Server" target="_blank">Get Started on GitHub</a>
@@ -295,39 +306,39 @@
     </div>
   </section>
 
-  <!-- Problem -->
-  <section id="problem">
+  <!-- Why -->
+  <section id="why">
     <div class="container">
-      <div class="section-label">The Problem</div>
-      <h2>Your knowledge is trapped. Your AI is blind.</h2>
-      <p>You've spent years writing notes. But every time you open an AI assistant, it starts from zero — no context, no memory of what you've already figured out.</p>
+      <div class="section-label">Why I built it</div>
+      <h2>I wanted to understand MCP, not just read about it</h2>
+      <p>I kept hearing about the Model Context Protocol and realised I could describe it but not explain what actually happens between an AI client and a server. So I built a small one.</p>
+      <p>I picked the simplest useful idea I could think of: let an assistant search and read a folder of Markdown notes. It is small enough to finish and real enough to run into the interesting problems.</p>
       <div class="problem-grid">
         <div class="problem-card">
-          <div class="label">Search is keyword-only</div>
-          <p>Miss one synonym and you find nothing. Your AI can't help unless you paste the content in manually.</p>
+          <div class="label">Resources vs tools</div>
+          <p>A resource is something the client can read. A tool is something the model decides to call. Wiring up both made the difference click.</p>
         </div>
         <div class="problem-card">
-          <div class="label">No synthesis</div>
-          <p>You find a note but still have to read the whole thing to extract the insight. That's your job, not the AI's.</p>
+          <div class="label">What stdio looks like</div>
+          <p>JSON-RPC 2.0 over standard input and output. No port, no server process to expose, which also simplifies the security story.</p>
         </div>
         <div class="problem-card">
-          <div class="label">Constant context switching</div>
-          <p>You're mid-conversation and have to stop, open Obsidian, search, read, copy, come back. Every time.</p>
+          <div class="label">Access means attack surface</div>
+          <p>Handing an AI a folder is a security decision. Testing it found real gaps in my first version. More in the Security section.</p>
         </div>
         <div class="problem-card">
-          <div class="label">Accumulation without retrieval</div>
-          <p>You wrote great notes 6 months ago. They're just sitting there. You've completely forgotten they exist.</p>
+          <div class="label">Building with an AI tool</div>
+          <p>Built with IBM Bob. This is a personal project and the views here are my own.</p>
         </div>
       </div>
 
-      <!-- Demo -->
       <div class="demo-box">
         <div class="prompt">You: "Summarize my notes on async architecture"</div>
-        <div class="arrow">  → MCP server searches your vault</div>
-        <div class="arrow">  → Finds the matching note</div>
-        <div class="result">  → AI returns a clear summary in seconds</div>
+        <div class="arrow">  → the model calls search_notes</div>
+        <div class="arrow">  → the server returns the matching note text</div>
+        <div class="result">  → the model writes the summary</div>
       </div>
-      <p>No copy-paste. No app switching. No forgetting you wrote something.</p>
+      <p>The server only finds and returns text. The summarising happens in the model on the client side.</p>
     </div>
   </section>
 
@@ -335,17 +346,17 @@
   <section id="features">
     <div class="container">
       <div class="section-label">Features</div>
-      <h2>Everything you need, nothing you don't</h2>
+      <h2>What it exposes</h2>
       <div class="features-grid">
         <div class="feature-card">
           <div class="badge">note:///</div>
           <h3>Notes Index Resource</h3>
-          <p>Browse your entire vault as a live URI listing. Every note is discoverable, including nested subfolders.</p>
+          <p>Lists every Markdown note in the vault as a URI, including nested subfolders.</p>
         </div>
         <div class="feature-card">
           <div class="badge">note:///{path}</div>
           <h3>Note Resource Template</h3>
-          <p>Read any individual note by URI on demand. Works with Obsidian links and Notion export paths.</p>
+          <p>Reads one note by URI, for example <code>note:///Work/sprint-planning.md</code>.</p>
         </div>
         <div class="feature-card">
           <div class="badge">search_notes</div>
@@ -355,7 +366,7 @@
         <div class="feature-card">
           <div class="badge">get_note</div>
           <h3>Get Note Tool</h3>
-          <p>Fetch a note by exact URI or fuzzy filename match. The AI summarizes the full content inline — no copy-paste needed.</p>
+          <p>Fetch a note by exact URI or fuzzy filename match. The full text goes into the model's context, and the model does the summarising.</p>
         </div>
       </div>
     </div>
@@ -365,42 +376,52 @@
   <section id="security">
     <div class="container">
       <div class="section-label">Security</div>
-      <h2>Designed in, not bolted on</h2>
-      <p>Your notes are personal. Security was a first-class requirement from the start.</p>
+      <h2>What I designed for, and what testing found</h2>
+      <p>Giving an AI read access to a folder creates an attack surface, even in a toy project. This is what the code does and what I actually tested. It is not a guarantee, and it has not been audited.</p>
       <div class="security-grid">
         <div class="sec-card">
           <div class="icon">🔒</div>
-          <h3>Read-only filesystem</h3>
-          <p>Only <code>fs.readFile</code> and <code>fs.readdir</code>. No write, delete, or execute operations exist in the codebase.</p>
+          <h3>Read-only</h3>
+          <p>Only <code>fs.readFile</code>, <code>fs.readdir</code> and <code>fs.realpath</code>. No write, delete, or execute operations.</p>
         </div>
         <div class="sec-card">
           <div class="icon">🛡️</div>
-          <h3>Path traversal protection</h3>
-          <p>Every URI is resolved and verified to be inside <code>NOTES_DIR</code>. A crafted <code>note:///../../etc/passwd</code> is blocked and returns an error.</p>
+          <h3>Traversal blocked</h3>
+          <p>Tested: <code>note:///../outside.md</code> and a sibling folder sharing the vault's name prefix are both rejected.</p>
         </div>
         <div class="sec-card">
           <div class="icon">🚫</div>
           <h3>No network listener</h3>
-          <p>Runs over stdio — no open port, no HTTP server. Only your MCP client can communicate with it.</p>
+          <p>Runs over stdio. No open port and no HTTP server. Only your MCP client can talk to it.</p>
         </div>
-        <div class="sec-card">
+        <div class="sec-card found">
+          <div class="icon">🔗</div>
+          <h3>Found and fixed: symlinks</h3>
+          <p>A symlink inside the vault pointing outside it could be read. Reads now resolve the real path and re-check the boundary.</p>
+        </div>
+        <div class="sec-card found">
           <div class="icon">👁️</div>
-          <h3>Hidden files excluded</h3>
-          <p>Files and directories starting with <code>.</code> are skipped. Your <code>.env</code> and <code>.ssh</code> folders are never touched.</p>
+          <h3>Found and fixed: hidden files</h3>
+          <p>The vault walker skipped dotfiles, but a direct request for <code>note:///.env</code> still worked. Direct reads now reject them.</p>
         </div>
-        <div class="sec-card">
-          <div class="icon">🔑</div>
-          <h3>Zero credentials</h3>
-          <p>No API keys, tokens, or passwords required. Nothing sensitive ever passes through the server.</p>
-        </div>
-        <div class="sec-card">
-          <div class="icon">📦</div>
-          <h3>Sandboxed to NOTES_DIR</h3>
-          <p>The vault walker only descends into the single directory set at startup. It cannot be redirected at runtime.</p>
+        <div class="sec-card found">
+          <div class="icon">📄</div>
+          <h3>Found and fixed: file types</h3>
+          <p>Direct reads accepted any file type. Only <code>.md</code> files are readable now.</p>
         </div>
       </div>
+      <p style="margin-top:16px;">Reproduce the checks with <code>npm run security-check</code>. It is a handful of regression checks, not a full test suite.</p>
       <div class="tradeoff">
-        <strong>⚠️ One trade-off to know:</strong> When <code>get_note</code> returns content, it enters your LLM's context. If you use a cloud-hosted LLM (Claude, GPT-4), that content leaves your machine. The server is fully local — the LLM may not be. Use a local model via Ollama for fully private processing.
+        <strong>⚠️ One trade-off to know:</strong> When a tool returns note content, it enters your LLM's context. If you use a cloud-hosted LLM (Claude, GPT-4), that content leaves your machine. The server is local, but the LLM may not be. Use a local model via Ollama for fully local processing. Note text can also contain instructions aimed at the model (prompt injection), which the server cannot filter.
+      </div>
+      <div class="limits">
+        <strong>Not verified</strong>
+        <ul>
+          <li>Very large vaults. Search reads every file on every query.</li>
+          <li>Windows paths and case-insensitive filesystems.</li>
+          <li>Race conditions between the real-path check and the read.</li>
+          <li>Anything an independent reviewer would find that I have not.</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -409,7 +430,7 @@
   <section id="install">
     <div class="container">
       <div class="section-label">Get Started</div>
-      <h2>Up and running in 3 steps</h2>
+      <h2>Try it in 3 steps</h2>
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
@@ -453,35 +474,27 @@ npm install && npm run build</pre>
     </div>
   </section>
 
-  <!-- Who benefits -->
-  <section id="who">
+  <!-- Next -->
+  <section id="next">
     <div class="container">
-      <div class="section-label">Who It's For</div>
-      <h2>Anyone with a note-taking habit</h2>
+      <div class="section-label">Next</div>
+      <h2>What I'd like to learn next</h2>
       <div class="who-grid">
         <div class="who-card">
-          <h3>Engineers & Architects</h3>
-          <p>Query ADRs, design notes, and tech spike write-ups mid-conversation without leaving your workflow.</p>
+          <h3>Semantic search</h3>
+          <p>Local embeddings instead of plain keyword matching, with no API key required.</p>
         </div>
         <div class="who-card">
-          <h3>Product Managers</h3>
-          <p>Pull up sprint notes, OKR drafts, and stakeholder summaries on demand inside any chat.</p>
+          <h3>Tags and front-matter</h3>
+          <p>Filter notes by metadata, not only by text.</p>
         </div>
         <div class="who-card">
-          <h3>Researchers & Writers</h3>
-          <p>Let your AI cross-reference your private research while you draft — no copy-paste, no tab switching.</p>
+          <h3>Backlinks</h3>
+          <p>Follow Obsidian-style links between notes.</p>
         </div>
         <div class="who-card">
-          <h3>Knowledge Workers</h3>
-          <p>Surface decisions and notes you forgot you made — before re-inventing the wheel in a meeting.</p>
-        </div>
-        <div class="who-card">
-          <h3>Students</h3>
-          <p>Ask your AI to summarize or connect concepts across your study notes — your second brain, activated.</p>
-        </div>
-        <div class="who-card">
-          <h3>Obsidian / Notion Users</h3>
-          <p>Turn a static archive into a live, queryable knowledge layer without changing how you take notes.</p>
+          <h3>Writing notes</h3>
+          <p>A <code>create_note</code> tool. Write access means revisiting everything in the Security section.</p>
         </div>
       </div>
     </div>
@@ -494,7 +507,7 @@ npm install && npm run build</pre>
       <a href="https://github.com/alihabbache/Personal-Knowledge-MCP-Server/blob/main/README.md" target="_blank">README</a>
       <a href="https://github.com/alihabbache/Personal-Knowledge-MCP-Server/issues" target="_blank">Issues</a>
     </div>
-    <p style="margin:0;">Built by <a href="https://github.com/alihabbache" target="_blank">Ali Habbache</a> · ISC License · Open Source</p>
+    <p style="margin:0;">Personal learning project by <a href="https://github.com/alihabbache" target="_blank">Ali Habbache</a>, built with IBM Bob. Views are my own. · ISC License · Open Source</p>
   </footer>
 
 </body>

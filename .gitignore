@@ -3,3 +3,4 @@ build/
 *.js.map
 .env
 .DS_Store
+Archive/
