@@ -47,10 +47,15 @@ function fileToUri(filePath: string): string {
   return `note:///${rel.replace(/\\/g, "/")}`;
 }
 
-/** Convert a resource URI back to an absolute file path. */
+/** Convert a resource URI back to an absolute file path. Throws on path traversal attempts. */
 function uriToFile(uri: string): string {
   const rel = uri.replace(/^note:\/\/\//, "");
-  return path.join(NOTES_DIR, rel);
+  const resolved = path.resolve(NOTES_DIR, rel);
+  const base = path.resolve(NOTES_DIR) + path.sep;
+  if (!resolved.startsWith(base)) {
+    throw new Error(`Path traversal attempt blocked: ${uri}`);
+  }
+  return resolved;
 }
 
 /** Read a single note, returning its content as a string. */
